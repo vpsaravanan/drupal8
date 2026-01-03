@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.26-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - .:/var/www/html
+    depends_on:
+      - php-fpm
+    networks:
+      - drupal-network
+
+  php-fpm:
+    build: .
+    volumes:
+      - .:/var/www/html
+      - ./logs:/var/log
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal_password
+      - DRUPAL_HASH_SALT=drupal8
+    depends_on:
+      - mysql
+    networks:
+      - drupal-network
+
+  mysql:
+    image: mariadb:10.5
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - drupal-network
+
+volumes:
+  mysql-data:
+  logs:
+
+networks:
+  drupal-network:
+    driver: bridge

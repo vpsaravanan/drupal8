@@ -1,0 +1,45 @@
+<?php
+
+use Drupal\Core\Block\BlockPluginInterface;
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function test_block_view_alter(array &$build, BlockPluginInterface $block) {
+  // Debugging - this will show that the hook is being called
+//   \Drupal::logger('test')->notice('Block hook called for: @id', ['@id' => $block->getPluginId()]);
+// dpm($block->getPluginId());
+$build['#cache']['max-age'] = 0;
+
+  // Target specific block by machine ID
+  if (strpos($block->getPluginId(), 'block_content') !== FALSE) {
+    // Example: append text
+    // dpm($build['content']);
+    if (isset($build['content']['body'][0]['#text'])) {
+      $build['content']['body'][0]['#text'] .= '<p><strong>Added by module</strong></p>';
+    }
+  } else {
+    // dpm($block->getPluginId());
+  }
+}
+
+function test_preprocess_block(&$variables) {
+    // dpm($variables['plugin_id']);
+    if ($variables['plugin_id'] === 'block_content:0484bb09-91d5-45a7-8d58-396a7f34d246') {
+        // dpm($variables['content']['body'][0]['#text']);
+    $variables['content']['body'][0]['#text'] = '<p>Injected via preprocess</p>';
+    // dpm($variables['content']['body'][0]['#text']);
+  }
+  if($variables['plugin_id'] == 'user_post') {
+    // dpm($variables);
+  }
+}
+
+
+
+function test_block_build_user_post_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+//   $build['content']['#markup'] = '<p>Powered by Drupal</p>';
+  print 'if';
+  exit;
+//   return $build;
+}

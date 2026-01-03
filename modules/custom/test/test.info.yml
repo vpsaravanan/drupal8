@@ -1,0 +1,10 @@
+name: Test
+type: module
+description: 'Test module.'
+# version: VERSION
+core: 8.x
+
+# Information added by Drupal.org packaging script on 2021-11-17
+version: '8.9.20'
+package: 'Custom'
+datestamp: 1637186035
